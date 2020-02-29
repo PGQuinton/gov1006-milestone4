@@ -1,0 +1,78 @@
+---
+title: "GOV 1006: Milestone 4"
+subtitle: "Paper Replication"
+author: "Pieter Quinton"
+date: "2/28/2020"
+output: 
+  bookdown::pdf_document2:
+    keep_tex: true
+bibliography: bibliography.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+# Load in the necessary libraries with tidyverse last
+
+library(bookdown)
+library(gt)
+library(stargazer)
+library(tidyverse)
+```
+
+# Introduction
+
+The paper I am replicating for my for final project is "Electoral Institutions and Electoral Cycles in Investment Incentives: A Field Experiment on Over 3,000 U.S. Municipalities" authored by Nathan M. Jensen, Micheal G. Findley, and Daniel L. Nielson (@jensen2020). The below plots are generated from the GT and Stargazer packages (@R-gt; @R-stargazer). The replication code for this milestone can be found at my github repository.^[[Github Repo](https://github.com/PGQuinton/gov1006-milestone4)]
+
+# GT
+
+```{r}
+# I decided to use one of the preloaded datasets in R Studio, for simplicity
+# The one I elected to use is mtcars
+
+data <- mtcars
+
+# Generated a simple gt table from the cars dataset
+# Just selected the top five rows of the data and first few columns to include
+# Added a source note to state where the data is from
+# The car names weren't loaded as a useable column so I created a new one with the names I needed
+
+data %>%
+  head(5) %>%
+   mutate(car_model = c("Mazda RX4","Mazda RX4 Wag","Datsun 710", "Hornet 4 Drive", "Hornet Sportabout")) %>%
+  select(car_model, mpg:hp) %>%
+  gt() %>%
+    tab_header(
+      title = "Car Data",
+      subtitle = "Engine Analysis of Five Cars"
+    ) %>%
+    cols_label(
+      car_model = "Car",
+      mpg = "MPG",
+      cyl = "Cylinders",
+      disp = "Displacement",
+      hp = "Horsepower"
+    ) %>%
+    tab_source_note(
+      source_note = "The data is from the mtcars dataset, preloaded into R Studio."
+    )
+```
+
+
+\newpage
+
+# Stargazer
+
+```{r, results='asis'}
+model <- lm(mpg ~ cyl, data = data)
+
+stargazer(model, 
+          header = FALSE,
+          title = "Relationship between MPG and Cylinders",
+          covariate.labels = "cylinders",
+          notes = "OLS regression using data from the preloaded mtcars dataset")
+```
+
+\newpage
+
+# References
